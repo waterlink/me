@@ -2,11 +2,13 @@ require "yaml"
 
 module Me
   class GitNotConfigured < RuntimeError; end
+  class SshNotConfigured < RuntimeError; end
   class NoActiveIdentity < RuntimeError; end
 
   class Store
-    def initialize
+    def initialize(identity = nil)
       @persistence = load
+      @specific_identity = identity
     end
 
     def activate(identity)
@@ -15,7 +17,7 @@ module Me
     end
 
     def active_identity
-      persistence.fetch("active_identity", "<none>")
+      specific_identity || persistence.fetch("active_identity", "<none>")
     end
 
     def git_name
@@ -32,6 +34,19 @@ module Me
       save
     end
 
+    def ssh_keys
+      ssh_config["keys"]
+    end
+
+    def configure_ssh(keys)
+      ssh_config!["keys"] = keys
+      save
+    end
+
+    def self.with_identity(identity)
+      new(identity)
+    end
+
     def with_identity(identity)
       active_identity.tap do |old_identity|
         activate(identity)
@@ -44,9 +59,11 @@ module Me
       create
     end
 
-    private
+    protected
 
-    attr_reader :persistence
+    attr_reader :persistence, :specific_identity
+
+    private
 
     def load
       return create unless File.exist?(filename)
@@ -79,6 +96,14 @@ module Me
 
     def git_config!
       identity["git"] ||= {}
+    end
+
+    def ssh_config
+      identity.fetch("ssh") { raise SshNotConfigured }
+    end
+
+    def ssh_config!
+      identity["ssh"] ||= {}
     end
 
     def identity

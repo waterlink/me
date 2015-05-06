@@ -1,58 +1,51 @@
 require "thor"
 
 require "me/store"
+require "me/registry"
+require "me/cli/whoami"
+require "me/cli/switch"
+require "me/cli/git_config"
+require "me/cli/ssh_config"
 
 module Me
+  Registry.register_store_factory(Store)
+
   module Cli
-    class Config < Thor
-      desc "git NAME GIT_FULL_NAME GIT_EMAIL", "Configure corresponding git config options"
-      def git(name, full_name, email)
-        store.with_identity(name) do
-          store.configure_git(full_name, email)
-        end
-      end
-
-      desc "ssh NAME SSH_KEYS", "Configure ssh-agent to use provided ssh keys"
-      def ssh(name, *keys)
-        puts "ssh-add -D"
-        keys.each do |key|
-          puts "ssh-add '#{key}'"
-        end
-      end
-
+    class BaseApp < Thor
       private
 
-      def store
-        @_store ||= Store.new
+      def render(view)
+        puts view.to_s
       end
     end
 
-    class App < Thor
+    class Config < BaseApp
+      desc "git NAME [GIT_NAME GIT_EMAIL]", "Configure corresponding git config options. Omit optional params to show current configuration"
+      def git(identity, name=nil, email=nil)
+        render GitConfig.new(identity, name, email).call
+      end
+
+      desc "ssh NAME [SSH_KEYS]", "Configure ssh-agent to use provided ssh keys. Omit optional params to show current configuration"
+      def ssh(identity, *keys)
+        render SshConfig.new(identity, keys).call
+      end
+    end
+
+    class App < BaseApp
       desc "whoami", "Show current identity"
       def whoami
-        puts "Active identity: #{active_identity}"
+        render Whoami.new.call
       end
 
       desc "switch NAME", "Switch to specified identity"
-      def switch(name)
-        store.activate(name)
-        whoami
+      def switch(identity)
+        render Switch.new(identity).call
       end
 
       default_task :whoami
 
       desc "config CONFIG_NAME", "Configure identities"
       subcommand "config", Config
-
-      private
-
-      def active_identity
-        store.active_identity
-      end
-
-      def store
-        @_store ||= Store.new
-      end
     end
   end
 end
