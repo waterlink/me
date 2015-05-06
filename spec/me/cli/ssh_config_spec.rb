@@ -29,7 +29,7 @@ module Me
           end
 
           it "responds with new key list" do
-            expect(command.call).to eq("keys:\n- id_rsa\n- id_dsa\n- github.rsa")
+            expect(command.call.to_s).to eq("keys:\n- id_rsa\n- id_dsa\n- github.rsa")
           end
         end
 
@@ -42,7 +42,7 @@ module Me
           end
 
           it "responds with current key list" do
-            expect(command.call).to eq("keys:\n- id_rsa\n- id_dsa\n- github.rsa")
+            expect(command.call.to_s).to eq("keys:\n- id_rsa\n- id_dsa\n- github.rsa")
           end
         end
       end

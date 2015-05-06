@@ -1,5 +1,6 @@
 require "forwardable"
 require "me/registry"
+require "me/cli/ssh_config_view"
 
 module Me
   module Cli
@@ -8,7 +9,7 @@ module Me
 
       def call
         configure
-        "keys:\n#{key_list}"
+        SshConfigView[ssh_keys]
       end
 
       private
@@ -18,10 +19,6 @@ module Me
       def configure
         return if keys.empty?
         configure_ssh(keys)
-      end
-
-      def key_list
-        ssh_keys.map { |x| "- #{x}" }.join("\n")
       end
 
       def store

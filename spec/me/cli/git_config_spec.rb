@@ -28,7 +28,7 @@ module Me
           end
 
           it "renders new configuration" do
-            expect(command.call).to eq("name:  john\nemail: john@example.org")
+            expect(command.call.to_s).to eq("name:  john\nemail: john@example.org")
           end
         end
 
@@ -42,7 +42,7 @@ module Me
           end
 
           it "renders current configuration" do
-            expect(command.call).to eq("name:  john\nemail: john@example.org")
+            expect(command.call.to_s).to eq("name:  john\nemail: john@example.org")
           end
         end
       end

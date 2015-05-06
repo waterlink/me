@@ -16,7 +16,7 @@ module Me
 
       describe "#call" do
         it "has expected response" do
-          expect(command.call).to eq("Active identity: personal")
+          expect(command.call.to_s).to eq("Active identity: personal")
         end
       end
     end

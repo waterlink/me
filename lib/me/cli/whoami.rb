@@ -1,5 +1,6 @@
 require "forwardable"
 require "me/registry"
+require "me/cli/active_identity_view"
 
 module Me
   module Cli
@@ -7,7 +8,7 @@ module Me
       extend Forwardable
 
       def call
-        "Active identity: #{active_identity}"
+        ActiveIdentityView[active_identity]
       end
 
       private

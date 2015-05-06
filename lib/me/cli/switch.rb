@@ -1,5 +1,6 @@
 require "forwardable"
 require "me/registry"
+require "me/cli/new_active_identity_view"
 
 module Me
   module Cli
@@ -8,7 +9,7 @@ module Me
 
       def call
         activate(identity)
-        "New active identity: #{active_identity}"
+        NewActiveIdentityView[active_identity]
       end
 
       private

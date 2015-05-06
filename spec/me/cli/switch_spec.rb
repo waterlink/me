@@ -25,7 +25,7 @@ module Me
         end
 
         it "responds with new active identity" do
-          expect(command.call).to eq("New active identity: new_identity")
+          expect(command.call.to_s).to eq("New active identity: new_identity")
         end
       end
     end

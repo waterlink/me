@@ -1,5 +1,6 @@
 require "forwardable"
 require "me/registry"
+require "me/cli/git_config_view"
 
 module Me
   module Cli
@@ -8,7 +9,7 @@ module Me
 
       def call
         configure
-        "name:  #{git_name}\nemail: #{git_email}"
+        GitConfigView[git_name, git_email]
       end
 
       private
