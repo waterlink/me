@@ -1,10 +1,7 @@
 require "yaml"
+require "me/errors"
 
 module Me
-  class GitNotConfigured < RuntimeError; end
-  class SshNotConfigured < RuntimeError; end
-  class NoActiveIdentity < RuntimeError; end
-
   class Store
     def initialize(identity = nil)
       @persistence = load
@@ -91,7 +88,7 @@ module Me
     end
 
     def git_config
-      identity.fetch("git") { raise GitNotConfigured }
+      identity.fetch("git") { raise Errors::GitNotConfigured }
     end
 
     def git_config!
@@ -99,7 +96,7 @@ module Me
     end
 
     def ssh_config
-      identity.fetch("ssh") { raise SshNotConfigured }
+      identity.fetch("ssh") { raise Errors::SshNotConfigured }
     end
 
     def ssh_config!
@@ -107,7 +104,7 @@ module Me
     end
 
     def identity
-      raise NoActiveIdentity if active_identity == "<none>"
+      raise Errors::NoActiveIdentity if active_identity == "<none>"
       persistence[active_identity] ||= {}
     end
 

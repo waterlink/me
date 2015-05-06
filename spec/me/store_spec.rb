@@ -9,7 +9,7 @@ module Me
 
     shared_examples_for "configuration" do
       it "raises error when there is no active identity" do
-        expect { fetch_it }.to raise_error(NoActiveIdentity)
+        expect { fetch_it }.to raise_error(Errors::NoActiveIdentity)
       end
 
       it "raises error when it is not configured" do
@@ -63,7 +63,7 @@ module Me
 
     describe "git configuration" do
       let(:configure_it) { store.configure_git("john smith", "john@example.org") }
-      let(:no_config_error) { GitNotConfigured }
+      let(:no_config_error) { Errors::GitNotConfigured }
 
       describe "#git_name" do
         include_examples "configuration"
@@ -80,7 +80,7 @@ module Me
 
     describe "ssh configuration" do
       let(:configure_it) { store.configure_ssh(["id_rsa", "id_github", "id_bitbucket"]) }
-      let(:no_config_error) { SshNotConfigured }
+      let(:no_config_error) { Errors::SshNotConfigured }
 
       describe "#ssh_keys" do
         include_examples "configuration"
