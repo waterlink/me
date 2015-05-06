@@ -1,14 +1,15 @@
-require "me"
-
 require "thor"
+
+require "me/store"
 
 module Me
   module Cli
     class Config < Thor
       desc "git NAME GIT_FULL_NAME GIT_EMAIL", "Configure corresponding git config options"
       def git(name, full_name, email)
-        puts "git config --global user.name '#{full_name}'"
-        puts "git config --global user.email '#{email}'"
+        store.with_identity(name) do
+          store.configure_git(full_name, email)
+        end
       end
 
       desc "ssh NAME SSH_KEYS", "Configure ssh-agent to use provided ssh keys"
@@ -17,6 +18,12 @@ module Me
         keys.each do |key|
           puts "ssh-add '#{key}'"
         end
+      end
+
+      private
+
+      def store
+        @_store ||= Store.new
       end
     end
 
@@ -28,7 +35,7 @@ module Me
 
       desc "switch NAME", "Switch to specified identity"
       def switch(name)
-        self._active_identity = name
+        store.activate(name)
         whoami
       end
 
@@ -37,12 +44,14 @@ module Me
       desc "config CONFIG_NAME", "Configure identities"
       subcommand "config", Config
 
-      attr_accessor :_active_identity
-
       private
 
       def active_identity
-        _active_identity || "<none>"
+        store.active_identity
+      end
+
+      def store
+        @_store ||= Store.new
       end
     end
   end

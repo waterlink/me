@@ -1,3 +1,5 @@
+ENV["ME_ENV"] ||= "test"
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -23,4 +25,8 @@ RSpec.configure do |config|
   config.order = :random
 
   Kernel.srand config.seed
+
+  config.before do
+    Me::Store.new._reset
+  end
 end
