@@ -6,7 +6,8 @@ module Me
     extend Forwardable
 
     delegate [:store_factory, :register_store_factory] => :thread_scoped
-    delegate [] => :process_scoped
+
+    delegate [:error_view_factories, :register_error_view_factories] => :process_scoped
 
     private
 
@@ -30,7 +31,7 @@ module Me
     end
 
     class ProcessScoped < Base
-      def_registry_readers
+      def_registry_readers :error_view_factories
     end
 
     class ThreadScoped < Base

@@ -88,7 +88,7 @@ module Me
     end
 
     def git_config
-      identity.fetch("git") { raise Errors::GitNotConfigured }
+      identity.fetch("git") { fail Errors::GitNotConfigured, active_identity }
     end
 
     def git_config!
@@ -96,7 +96,7 @@ module Me
     end
 
     def ssh_config
-      identity.fetch("ssh") { raise Errors::SshNotConfigured }
+      identity.fetch("ssh") { fail Errors::SshNotConfigured, active_identity }
     end
 
     def ssh_config!
@@ -104,7 +104,7 @@ module Me
     end
 
     def identity
-      raise Errors::NoActiveIdentity if active_identity == "<none>"
+      fail Errors::NoActiveIdentity if active_identity == "<none>"
       persistence[active_identity] ||= {}
     end
 
