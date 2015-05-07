@@ -2,6 +2,11 @@
 
 Small tool for switching common identities (ssh keys, git config, etc)
 
+## TODO
+
+- [ ] Split `Store` into 3 independent stores and remove how much small domain logic it has left
+- [ ] Implement actual activation of configurations for ssh and git (probably invoked by `me`)
+
 ## Installation
 
 ```
