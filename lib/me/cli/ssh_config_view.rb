@@ -1,6 +1,8 @@
+require "me/ssh_config_view_model"
+
 module Me
   module Cli
-    class SshConfigView < Struct.new(:keys)
+    class SshConfigView < SshConfigViewModel
       def to_s
         "keys:\n#{key_list}"
       end

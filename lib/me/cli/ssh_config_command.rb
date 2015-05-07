@@ -1,28 +1,27 @@
 require "forwardable"
-require "me/registry"
+require "me/ssh_config"
 require "me/cli/ssh_config_view"
 
 module Me
   module Cli
-    class SshConfigCommand < Struct.new(:identity, :keys)
+    class SshConfigCommand < Struct.new(:identity_name, :keys)
       extend Forwardable
 
       def call
         configure
-        SshConfigView[ssh_keys]
+        current_ssh_config.build_view(SshConfigView)
       end
 
       private
 
-      delegate [:configure_ssh, :ssh_keys] => :store
+      delegate [:configure] => :ssh_config
 
-      def configure
-        return if keys.empty?
-        configure_ssh(keys)
+      def ssh_config
+        SshConfig.new(keys, identity_name)
       end
 
-      def store
-        Registry.store_factory.with_identity(identity)
+      def current_ssh_config
+        SshConfig.for_identity(identity_name)
       end
     end
   end
