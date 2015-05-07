@@ -4,7 +4,7 @@ require "me/cli/git_config_view"
 
 module Me
   module Cli
-    class GitConfig < Struct.new(:identity, :name, :email)
+    class GitConfig < Struct.new(:identity_name, :name, :email)
       extend Forwardable
 
       def call
@@ -22,7 +22,7 @@ module Me
       end
 
       def store
-        Registry.store_factory.with_identity(identity)
+        Registry.store_factory.with_identity(identity_name)
       end
     end
   end
