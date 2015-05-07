@@ -1,6 +1,8 @@
+require "me/git_config_view_model"
+
 module Me
   module Cli
-    class GitConfigView < Struct.new(:name, :email)
+    class GitConfigView < GitConfigViewModel
       def to_s
         "name:  #{name}\nemail: #{email}"
       end

@@ -1,4 +1,3 @@
-require "me/registry"
 require "me/identity"
 require "me/cli/active_identity_view"
 

@@ -1,5 +1,4 @@
 require "forwardable"
-require "me/registry"
 require "me/cli/new_active_identity_view"
 
 module Me

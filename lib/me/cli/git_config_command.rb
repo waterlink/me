@@ -1,5 +1,5 @@
 require "forwardable"
-require "me/registry"
+require "me/git_config"
 require "me/cli/git_config_view"
 
 module Me
@@ -9,20 +9,19 @@ module Me
 
       def call
         configure
-        GitConfigView[git_name, git_email]
+        current_git_config.build_view(GitConfigView)
       end
 
       private
 
-      delegate [:configure_git, :git_name, :git_email] => :store
+      delegate [:configure] => :git_config
 
-      def configure
-        return unless name && email
-        configure_git(name, email)
+      def git_config
+        GitConfig.new(name, email, identity_name)
       end
 
-      def store
-        Registry.store_factory.with_identity(identity_name)
+      def current_git_config
+        GitConfig.for_identity(identity_name)
       end
     end
   end
