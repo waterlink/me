@@ -107,9 +107,13 @@ module Me
       identity["ssh"] ||= {}
     end
 
+    def identities
+      persistence["identities"] ||= {}
+    end
+
     def identity
       fail Errors::NoActiveIdentity if active_identity == "<none>"
-      persistence[active_identity] ||= {}
+      identities[active_identity] ||= {}
     end
 
     class Environment < Struct.new(:value)
