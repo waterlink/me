@@ -1,4 +1,5 @@
 require "forwardable"
+require "me/thread_scope"
 
 module Me
   module Registry
@@ -16,7 +17,7 @@ module Me
     end
 
     def thread_scoped
-      Thread.current[:__me_thread_scoped_registry] ||= ThreadScoped.new
+      ThreadScope[:thread_scoped_registry] ||= ThreadScoped.new
     end
 
     class Base

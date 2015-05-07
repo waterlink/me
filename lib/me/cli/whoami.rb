@@ -1,5 +1,6 @@
 require "forwardable"
 require "me/registry"
+require "me/identity"
 require "me/cli/active_identity_view"
 
 module Me
@@ -8,15 +9,13 @@ module Me
       extend Forwardable
 
       def call
-        ActiveIdentityView[active_identity]
+        active_identity.build_view(ActiveIdentityView)
       end
 
       private
 
-      delegate [:active_identity] => :store
-
-      def store
-        Registry.store_factory.new
+      def active_identity
+        Identity.active
       end
     end
   end

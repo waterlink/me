@@ -1,5 +1,8 @@
 ENV["ME_ENV"] ||= "test"
 
+require "me/store"
+require "me/thread_scope"
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -28,5 +31,9 @@ RSpec.configure do |config|
 
   config.before do
     Me::Store.new._reset
+  end
+
+  config.after do
+    Me::ThreadScope._reset
   end
 end

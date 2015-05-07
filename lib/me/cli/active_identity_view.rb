@@ -1,8 +1,10 @@
+require "me/view"
+
 module Me
   module Cli
-    class ActiveIdentityView < Struct.new(:active_identity)
+    class ActiveIdentityView < View.new(:name)
       def to_s
-        "Active identity: #{active_identity}"
+        "Active identity: #{name}"
       end
     end
   end
