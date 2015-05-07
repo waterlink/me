@@ -10,17 +10,24 @@ module Me
       let(:identity) { double("Identity") }
       let(:store_factory) { class_double(Store, new: store) }
       let(:store) { instance_double(Store, active_identity: active_identity) }
+      let(:identity_store) { instance_double(Store) }
 
       let(:active_identity) { double("Identity", to_s: "new_identity") }
 
       before do
         Registry.register_store_factory(store_factory)
-        allow(store).to receive(:activate).with(identity)
+
+        allow(store_factory)
+          .to receive(:with_identity)
+          .with(identity)
+          .and_return(identity_store)
+
+        allow(identity_store).to receive(:activate!)
       end
 
       describe "#call" do
         it "activates new identity" do
-          expect(store).to receive(:activate).with(identity).once
+          expect(identity_store).to receive(:activate!).once
           command.call
         end
 

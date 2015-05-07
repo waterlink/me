@@ -16,9 +16,17 @@ module Me
       view_factory.new(name: name)
     end
 
+    def activate
+      store.activate!
+    end
+
     protected
 
     attr_reader :name
+
+    def store
+      @_store ||= Registry.store_factory.with_identity(name)
+    end
   end
 
   class << Identity

@@ -13,6 +13,10 @@ module Me
       save
     end
 
+    def activate!
+      activate(active_identity)
+    end
+
     def active_identity
       specific_identity || persistence.fetch("active_identity", "<none>")
     end

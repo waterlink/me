@@ -1,8 +1,8 @@
-require "me/view"
+require "me/identity_view_model"
 
 module Me
   module Cli
-    class ActiveIdentityView < View.new(:name)
+    class ActiveIdentityView < IdentityViewModel
       def to_s
         "Active identity: #{name}"
       end

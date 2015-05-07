@@ -4,20 +4,24 @@ require "me/cli/new_active_identity_view"
 
 module Me
   module Cli
-    class Switch < Struct.new(:identity)
+    class Switch < Struct.new(:name)
       extend Forwardable
 
       def call
-        activate(identity)
-        NewActiveIdentityView[active_identity]
+        activate
+        active_identity.build_view(NewActiveIdentityView)
       end
 
       private
 
-      delegate [:activate, :active_identity] => :store
+      delegate [:activate] => :identity
 
-      def store
-        Registry.store_factory.new
+      def active_identity
+        Identity.active
+      end
+
+      def identity
+        Identity.new(name)
       end
     end
   end

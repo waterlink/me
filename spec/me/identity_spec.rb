@@ -10,9 +10,14 @@ module Me
 
     let(:store_factory) { class_double(Store, new: store) }
     let(:store) { instance_double(Store) }
+    let(:identity_store) { instance_double(Store) }
 
     before do
       Registry.register_store_factory(store_factory)
+      allow(store_factory)
+        .to receive(:with_identity)
+        .with(name)
+        .and_return(identity_store)
     end
 
     describe "#initialize" do
@@ -56,6 +61,13 @@ module Me
 
       it "gives the view its name" do
         expect(identity.build_view(view_factory)).to eq(view)
+      end
+    end
+
+    describe "#activate" do
+      it "delegates to store to activate identity with corresponding name" do
+        expect(identity_store).to receive(:activate!).once
+        identity.activate
       end
     end
   end

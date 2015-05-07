@@ -48,6 +48,14 @@ module Me
       end
     end
 
+    describe "#activate!" do
+      it "activates current active identity" do
+        store.activate("one")
+        described_class.with_identity("two").activate!
+        expect(store.active_identity).to eq("two")
+      end
+    end
+
     describe "#with_identity" do
       it "allows to temporary (for block) switch an identity" do
         store.activate("personal")
