@@ -8,10 +8,6 @@ module Me
     alias_method :store, :stateless_store
 
     shared_examples_for "configuration" do
-      it "raises error when there is no active identity" do
-        expect { fetch_it }.to raise_error(Errors::NoActiveIdentity)
-      end
-
       it "raises error when it is not configured" do
         store.activate("personal")
         expect { fetch_it }.to raise_error(no_config_error)
@@ -25,15 +21,10 @@ module Me
     end
 
     describe ".with_identity" do
-      subject(:identity_store) { described_class.with_identity(identity) }
-      let(:identity) { "other_identity" }
-
-      it "creates store operating on specific identity" do
-        expect(identity_store.active_identity).to eq(identity)
-      end
-
-      it "does not activate this identity" do
-        expect(identity_store.active_identity).not_to eq(store.active_identity)
+      it "creates IdentityStore" do
+        identity = "an identity"
+        expect(described_class.with_identity(identity))
+          .to eq(IdentityStore.new(Store.new, identity))
       end
     end
 
@@ -48,51 +39,34 @@ module Me
       end
     end
 
-    describe "#activate!" do
-      it "activates current active identity" do
-        store.activate("one")
-        described_class.with_identity("two").activate!
-        expect(store.active_identity).to eq("two")
-      end
-    end
-
-    describe "#with_identity" do
-      it "allows to temporary (for block) switch an identity" do
-        store.activate("personal")
-        expect(store.active_identity).to eq("personal")
-
-        store.with_identity("work") do
-          expect(store.active_identity).to eq("work")
-        end
-
-        expect(store.active_identity).to eq("personal")
-      end
-    end
-
     describe "git configuration" do
-      let(:configure_it) { store.configure_git("john smith", "john@example.org") }
+      let(:configure_it) { store.save_git_config(
+        "personal","name" => "john smith", "email" => "john@example.org"
+      ) }
       let(:no_config_error) { Errors::GitNotConfigured }
 
       describe "#git_name" do
         include_examples "configuration"
-        let(:fetch_it) { store.git_name }
+        let(:fetch_it) { store.git_config("personal")["name"] }
         let(:expected) { "john smith" }
       end
 
       describe "#git_email" do
         include_examples "configuration"
-        let(:fetch_it) { store.git_email }
+        let(:fetch_it) { store.git_config("personal")["email"] }
         let(:expected) { "john@example.org" }
       end
     end
 
     describe "ssh configuration" do
-      let(:configure_it) { store.configure_ssh(["id_rsa", "id_github", "id_bitbucket"]) }
+      let(:configure_it) { store.save_ssh_config(
+        "work", "keys" => ["id_rsa", "id_github", "id_bitbucket"]
+      ) }
       let(:no_config_error) { Errors::SshNotConfigured }
 
       describe "#ssh_keys" do
         include_examples "configuration"
-        let(:fetch_it) { store.ssh_keys }
+        let(:fetch_it) { store.ssh_config("work")["keys"] }
         let(:expected) { ["id_rsa", "id_github", "id_bitbucket"] }
       end
     end

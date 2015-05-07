@@ -12,7 +12,9 @@ module Me
     let(:identity_name) { "sarah_personal" }
 
     let(:store_factory) { class_double(Store) }
-    let(:identity_store) { instance_double(Store, git_name: name, git_email: email) }
+    let(:identity_store) { instance_double(IdentityStore, git_config: git_config_hash) }
+
+    let(:git_config_hash) { { "name" => name, "email" => email } }
 
     before do
       Registry.register_store_factory(store_factory)
@@ -68,8 +70,9 @@ module Me
       let(:found_email) { double("Email") }
 
       before do
-        allow(identity_store).to receive(:git_name).and_return(found_name)
-        allow(identity_store).to receive(:git_email).and_return(found_email)
+        allow(identity_store)
+          .to receive(:git_config)
+          .and_return("name" => found_name, "email" => found_email)
       end
 
       it "finds git config for specified identity" do
@@ -81,8 +84,8 @@ module Me
       context "when name and email are present" do
         it "delegates to store to configure git" do
           expect(identity_store)
-            .to receive(:configure_git)
-            .with(name, email)
+            .to receive(:save_git_config)
+            .with("name" => name, "email" => email)
             .once
 
           git_config.configure
@@ -94,7 +97,7 @@ module Me
         let(:email) { nil }
 
         it "does nothing" do
-          expect(identity_store).not_to receive(:configure_git)
+          expect(identity_store).not_to receive(:save_git_config)
           git_config.configure
         end
       end

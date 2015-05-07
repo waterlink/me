@@ -10,7 +10,7 @@ module Me
       let(:identity) { double("Identity") }
       let(:store_factory) { class_double(Store, new: store) }
       let(:store) { instance_double(Store, active_identity: active_identity) }
-      let(:identity_store) { instance_double(Store) }
+      let(:identity_store) { instance_double(IdentityStore) }
 
       let(:active_identity) { double("Identity", to_s: "new_identity") }
 
@@ -22,12 +22,12 @@ module Me
           .with(identity)
           .and_return(identity_store)
 
-        allow(identity_store).to receive(:activate!)
+        allow(identity_store).to receive(:activate)
       end
 
       describe "#call" do
         it "activates new identity" do
-          expect(identity_store).to receive(:activate!).once
+          expect(identity_store).to receive(:activate).once
           command.call
         end
 

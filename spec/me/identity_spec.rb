@@ -10,7 +10,7 @@ module Me
 
     let(:store_factory) { class_double(Store, new: store) }
     let(:store) { instance_double(Store) }
-    let(:identity_store) { instance_double(Store) }
+    let(:identity_store) { instance_double(IdentityStore) }
 
     before do
       Registry.register_store_factory(store_factory)
@@ -66,7 +66,7 @@ module Me
 
     describe "#activate" do
       it "delegates to store to activate identity with corresponding name" do
-        expect(identity_store).to receive(:activate!).once
+        expect(identity_store).to receive(:activate).once
         identity.activate
       end
     end

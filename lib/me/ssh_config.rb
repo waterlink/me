@@ -14,7 +14,7 @@ module Me
 
     def configure
       return if keys.empty?
-      store.configure_ssh(keys)
+      store.save_ssh_config("keys" => keys)
     end
 
     def build_view(view_factory)
@@ -22,7 +22,7 @@ module Me
     end
 
     def _load
-      @keys = store.ssh_keys
+      @keys = store.ssh_config["keys"]
       self
     end
 

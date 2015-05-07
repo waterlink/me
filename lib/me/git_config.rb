@@ -14,7 +14,7 @@ module Me
 
     def configure
       return unless name && email
-      store.configure_git(name, email)
+      store.save_git_config("name" => name, "email" => email)
     end
 
     def build_view(view_factory)
@@ -23,8 +23,8 @@ module Me
 
     # @api private
     def _load
-      @name = store.git_name
-      @email = store.git_email
+      @name = store.git_config["name"]
+      @email = store.git_config["email"]
       self
     end
 

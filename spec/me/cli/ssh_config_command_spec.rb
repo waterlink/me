@@ -9,14 +9,16 @@ module Me
 
       let(:identity) { double("Identity") }
       let(:store_factory) { class_double(Store) }
-      let(:store) { instance_double(Store, ssh_keys: expected_keys) }
+      let(:store) { instance_double(IdentityStore, ssh_config: ssh_config) }
+
+      let(:ssh_config) { { "keys" => expected_keys } }
 
       let(:expected_keys) { ["id_rsa", "id_dsa", "github.rsa"] }
 
       before do
         Registry.register_store_factory(store_factory)
         allow(store_factory).to receive(:with_identity).with(identity).and_return(store)
-        allow(store).to receive(:configure_ssh).with(keys)
+        allow(store).to receive(:save_ssh_config).with("keys" => keys)
       end
 
       describe "#call" do
@@ -24,7 +26,7 @@ module Me
           let(:keys) { instance_double(Array, empty?: false) }
 
           it "configures ssh with this keys" do
-            expect(store).to receive(:configure_ssh).with(keys).once
+            expect(store).to receive(:save_ssh_config).with("keys" => keys).once
             command.call
           end
 
@@ -37,7 +39,7 @@ module Me
           let(:keys) { instance_double(Array, empty?: true) }
 
           it "does not configure ssh" do
-            expect(store).not_to receive(:configure_ssh)
+            expect(store).not_to receive(:save_ssh_config)
             command.call
           end
 

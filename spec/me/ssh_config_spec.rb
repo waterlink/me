@@ -10,7 +10,7 @@ module Me
     let(:keys) { ["id_rsa", "github.rsa"] }
 
     let(:store_factory) { class_double(Store) }
-    let(:identity_store) { instance_double(Store) }
+    let(:identity_store) { instance_double(IdentityStore) }
 
     before do
       Registry.register_store_factory(store_factory)
@@ -55,8 +55,8 @@ module Me
 
         it "delegates to store to configure ssh" do
           expect(identity_store)
-            .to receive(:configure_ssh)
-            .with(keys)
+            .to receive(:save_ssh_config)
+            .with("keys" => keys)
             .once
 
           ssh_config.configure
@@ -67,7 +67,7 @@ module Me
         let(:keys) { instance_double(Array, empty?: true) }
 
         it "does nothing" do
-          expect(identity_store).not_to receive(:configure_ssh)
+          expect(identity_store).not_to receive(:save_ssh_config)
           ssh_config.configure
         end
       end
@@ -91,7 +91,7 @@ module Me
       let(:found_keys) { double("Keys") }
 
       before do
-        allow(identity_store).to receive(:ssh_keys).and_return(found_keys)
+        allow(identity_store).to receive(:ssh_config).and_return("keys" => found_keys)
       end
 
       it "finds ssh config for specified identity" do

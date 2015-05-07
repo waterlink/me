@@ -17,7 +17,7 @@ module Me
     end
 
     def activate
-      store.activate!
+      store.activate
     end
 
     protected

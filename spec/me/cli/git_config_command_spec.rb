@@ -9,12 +9,14 @@ module Me
 
       let(:identity) { double("Identity") }
       let(:store_factory) { class_double(Store) }
-      let(:store) { instance_double(Store, git_name: "john", git_email: "john@example.org") }
+      let(:store) { instance_double(IdentityStore, git_config: git_config) }
+
+      let(:git_config) { { "name" => "john", "email" => "john@example.org" } }
 
       before do
         Registry.register_store_factory(store_factory)
         allow(store_factory).to receive(:with_identity).with(identity).and_return(store)
-        allow(store).to receive(:configure_git).with(name, email)
+        allow(store).to receive(:save_git_config).with("name" => name, "email" => email)
       end
 
       describe "#call" do
@@ -23,7 +25,7 @@ module Me
           let(:email) { double("email") }
 
           it "configures git" do
-            expect(store).to receive(:configure_git).with(name, email).once
+            expect(store).to receive(:save_git_config).with("name" => name, "email" => email).once
             command.call
           end
 
@@ -37,7 +39,7 @@ module Me
           let(:email) { nil }
 
           it "does not configure git" do
-            expect(store).not_to receive(:configure_git)
+            expect(store).not_to receive(:save_git_config)
             command.call
           end
 
