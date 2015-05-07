@@ -1,10 +1,10 @@
-require "me/cli/whoami"
+require "me/cli/whoami_command"
 require "me/registry"
 require "me/store"
 
 module Me
   module Cli
-    RSpec.describe Whoami do
+    RSpec.describe WhoamiCommand do
       subject(:command) { described_class.new }
 
       let(:store_factory) { class_double(Store, new: store) }

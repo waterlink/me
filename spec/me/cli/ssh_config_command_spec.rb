@@ -1,10 +1,10 @@
-require "me/cli/ssh_config"
+require "me/cli/ssh_config_command"
 require "me/registry"
 require "me/store"
 
 module Me
   module Cli
-    RSpec.describe SshConfig do
+    RSpec.describe SshConfigCommand do
       subject(:command) { described_class.new(identity, keys) }
 
       let(:identity) { double("Identity") }

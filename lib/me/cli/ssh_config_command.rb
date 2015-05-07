@@ -4,7 +4,7 @@ require "me/cli/ssh_config_view"
 
 module Me
   module Cli
-    class SshConfig < Struct.new(:identity, :keys)
+    class SshConfigCommand < Struct.new(:identity, :keys)
       extend Forwardable
 
       def call

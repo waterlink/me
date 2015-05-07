@@ -4,7 +4,7 @@ require "me/cli/active_identity_view"
 
 module Me
   module Cli
-    class Whoami
+    class WhoamiCommand
       def call
         active_identity.build_view(ActiveIdentityView)
       end

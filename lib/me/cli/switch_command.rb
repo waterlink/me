@@ -4,7 +4,7 @@ require "me/cli/new_active_identity_view"
 
 module Me
   module Cli
-    class Switch < Struct.new(:name)
+    class SwitchCommand < Struct.new(:name)
       extend Forwardable
 
       def call

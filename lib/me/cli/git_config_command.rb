@@ -4,7 +4,7 @@ require "me/cli/git_config_view"
 
 module Me
   module Cli
-    class GitConfig < Struct.new(:identity_name, :name, :email)
+    class GitConfigCommand < Struct.new(:identity_name, :name, :email)
       extend Forwardable
 
       def call

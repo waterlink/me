@@ -1,10 +1,10 @@
-require "me/cli/git_config"
+require "me/cli/git_config_command"
 require "me/registry"
 require "me/store"
 
 module Me
   module Cli
-    RSpec.describe GitConfig do
+    RSpec.describe GitConfigCommand do
       subject(:command) { described_class.new(identity, name, email) }
 
       let(:identity) { double("Identity") }

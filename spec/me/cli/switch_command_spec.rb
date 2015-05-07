@@ -1,10 +1,10 @@
-require "me/cli/switch"
+require "me/cli/switch_command"
 require "me/store"
 require "me/registry"
 
 module Me
   module Cli
-    RSpec.describe Switch do
+    RSpec.describe SwitchCommand do
       subject(:command) { described_class.new(identity) }
 
       let(:identity) { double("Identity") }
