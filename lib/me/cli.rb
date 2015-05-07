@@ -22,7 +22,6 @@ module Me
     Registry.register_store_factory(Store)
     Registry.register_error_view_factories(ERROR_VIEW_FACTORIES)
 
-
     class BaseApp < Thor
       private
 
