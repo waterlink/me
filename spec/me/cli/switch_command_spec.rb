@@ -5,29 +5,35 @@ require "me/registry"
 module Me
   module Cli
     RSpec.describe SwitchCommand do
-      subject(:command) { described_class.new(identity) }
+      subject(:command) { described_class.new(name) }
+
+      let(:name) { double("Name") }
 
       let(:identity) { double("Identity") }
-      let(:store_factory) { class_double(Store, new: store) }
-      let(:store) { instance_double(Store, active_identity: active_identity) }
-      let(:identity_store) { instance_double(IdentityStore) }
+      let(:mapper_factory) { class_double(Identity::Store2Mapper) }
+      let(:mapper) { instance_double(Identity::Store2Mapper, find: identity) }
 
-      let(:active_identity) { double("Identity", to_s: "new_identity") }
+      let(:active_identity) { double("Active Identity") }
 
       before do
-        Registry.register_store_factory(store_factory)
+        Registry.register_identity_mapper_factory(mapper_factory)
 
-        allow(store_factory)
-          .to receive(:with_identity)
-          .with(identity)
-          .and_return(identity_store)
+        allow(Identity).to receive(:active).and_return(active_identity)
+        allow(identity).to receive(:activate)
+        allow(active_identity)
+          .to receive(:build_view)
+          .with(NewActiveIdentityView)
+          .and_return(NewActiveIdentityView.new(name: "new_identity"))
 
-        allow(identity_store).to receive(:activate)
+        allow(mapper_factory)
+          .to receive(:new)
+          .with(name)
+          .and_return(mapper)
       end
 
       describe "#call" do
         it "activates new identity" do
-          expect(identity_store).to receive(:activate).once
+          expect(identity).to receive(:activate).once
           command.call
         end
 

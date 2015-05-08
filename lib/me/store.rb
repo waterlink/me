@@ -81,23 +81,11 @@ module Me
     private
 
     def load
-      Store2.build(filename)
+      Store2.build
     end
 
     def save
       persistence.save
-    end
-
-    def filename
-      "#{user_home}/.me#{filename_suffix}.yml"
-    end
-
-    def user_home
-      ENV.fetch("HOME")
-    end
-
-    def filename_suffix
-      Environment.wrap(ENV.fetch("ME_ENV", NullEnvironment.new))
     end
 
     def identities
@@ -109,23 +97,6 @@ module Me
       fail Errors::NoActiveIdentity if identity == "<none>"
       identities.get_or_set(identity, {})
       identities.scoped(identity)
-    end
-
-    class Environment < Struct.new(:value)
-      def self.wrap(env)
-        return env if env.is_a?(self)
-        new(env)
-      end
-
-      def to_s
-        "_#{value}"
-      end
-    end
-
-    class NullEnvironment < Environment
-      def to_s
-        ""
-      end
     end
   end
 end

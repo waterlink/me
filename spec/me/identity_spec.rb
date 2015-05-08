@@ -4,20 +4,20 @@ require "me/registry"
 
 module Me
   RSpec.describe Identity do
-    subject(:identity) { Identity.new(name) }
+    subject(:identity) { Identity.new(name).with_mapper(mapper) }
 
     let(:name) { "john" }
 
-    let(:store_factory) { class_double(Store, new: store) }
-    let(:store) { instance_double(Store) }
-    let(:identity_store) { instance_double(IdentityStore) }
+    let(:mapper_factory) { class_double(Identity::Store2Mapper, new: active_mapper) }
+    let(:active_mapper) { instance_double(Identity::Store2Mapper) }
+    let(:mapper) { instance_double(Identity::Store2Mapper) }
 
     before do
-      Registry.register_store_factory(store_factory)
-      allow(store_factory)
-        .to receive(:with_identity)
+      Registry.register_identity_mapper_factory(mapper_factory)
+      allow(mapper_factory)
+        .to receive(:new)
         .with(name)
-        .and_return(identity_store)
+        .and_return(mapper)
     end
 
     describe "#initialize" do
@@ -43,8 +43,9 @@ module Me
 
     describe ".active" do
       it "returns active identity" do
-        allow(store).to receive(:active_identity).and_return("sarah")
-        expect(Identity.active).to eq(Identity.new("sarah"))
+        expected = instance_double(Identity)
+        allow(active_mapper).to receive(:find).and_return(expected)
+        expect(Identity.active).to eq(expected)
       end
     end
 
@@ -65,8 +66,8 @@ module Me
     end
 
     describe "#activate" do
-      it "delegates to store to activate identity with corresponding name" do
-        expect(identity_store).to receive(:activate).once
+      it "calls update on mapper with active_identity = name" do
+        expect(mapper).to receive(:update).with(active_identity: name).once
         identity.activate
       end
     end

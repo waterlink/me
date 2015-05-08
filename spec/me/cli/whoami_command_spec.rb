@@ -7,11 +7,14 @@ module Me
     RSpec.describe WhoamiCommand do
       subject(:command) { described_class.new }
 
-      let(:store_factory) { class_double(Store, new: store) }
-      let(:store) { instance_double(Store, active_identity: "personal") }
+      let(:identity) { instance_double(Identity) }
 
       before do
-        Registry.register_store_factory(store_factory)
+        allow(Identity).to receive(:active).and_return(identity)
+        allow(identity)
+          .to receive(:build_view)
+          .with(ActiveIdentityView)
+          .and_return(ActiveIdentityView.new(name: "personal"))
       end
 
       describe "#call" do

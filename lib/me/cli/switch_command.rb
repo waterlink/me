@@ -16,7 +16,7 @@ module Me
       end
 
       def identity
-        Identity.new(name)
+        Registry.identity_mapper_factory.new(name).find
       end
     end
   end

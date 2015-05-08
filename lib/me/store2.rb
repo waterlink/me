@@ -44,13 +44,12 @@ module Me
       attr_reader :store, :scope
     end
 
-    def initialize(filename)
-      @filename = filename
+    def initialize
       @data = load
     end
 
-    def self.build(filename)
-      Store2.new(filename).scoped
+    def self.build
+      Store2.new.scoped
     end
 
     def scoped(*scope)
@@ -93,7 +92,7 @@ module Me
 
     protected
 
-    attr_reader :filename, :data
+    attr_reader :data
 
     private
 
@@ -104,6 +103,35 @@ module Me
 
     def create
       (@data = {}).tap { save }
+    end
+
+    def filename
+      "#{user_home}/.me#{filename_suffix}.yml"
+    end
+
+    def user_home
+      ENV.fetch("HOME")
+    end
+
+    def filename_suffix
+      Environment.wrap(ENV.fetch("ME_ENV", NullEnvironment.new))
+    end
+
+    class Environment < Struct.new(:value)
+      def self.wrap(env)
+        return env if env.is_a?(self)
+        new(env)
+      end
+
+      def to_s
+        "_#{value}"
+      end
+    end
+
+    class NullEnvironment < Environment
+      def to_s
+        ""
+      end
     end
   end
 end
