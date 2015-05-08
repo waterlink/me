@@ -6,6 +6,7 @@ require "me/errors"
 require "me/error_presenter"
 
 require "me/mappers/identity_store2"
+require "me/mappers/git_config_store2"
 
 require "me/cli/whoami_command"
 require "me/cli/switch_command"
@@ -24,6 +25,7 @@ module Me
     Registry.register_store_factory(Store)
     Registry.register_error_view_factories(ERROR_VIEW_FACTORIES)
     Registry.register_identity_mapper_factory(Me::Mappers::IdentityStore2)
+    Registry.register_git_config_mapper_factory(Me::Mappers::GitConfigStore2)
 
     class BaseApp < Thor
       private

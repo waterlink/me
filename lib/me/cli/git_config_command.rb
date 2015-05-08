@@ -12,7 +12,7 @@ module Me
       private
 
       def git_config
-        GitConfig.new(name, email, identity_name)
+        Registry.git_config_mapper_factory.new(name, email, identity_name).find
       end
 
       def current_git_config

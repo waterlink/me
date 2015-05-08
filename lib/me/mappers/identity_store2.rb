@@ -17,7 +17,9 @@ module Me
       end
 
       def update(name: nil, active_identity: nil)
-        store.set("active_identity", active_identity) if active_identity
+        return unless active_identity
+        store.set("active_identity", active_identity)
+        store.save
       end
 
       protected

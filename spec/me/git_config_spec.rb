@@ -4,24 +4,24 @@ require "me/registry"
 
 module Me
   RSpec.describe GitConfig do
-    subject(:git_config) { GitConfig.new(name, email, identity_name) }
+    subject(:git_config) { GitConfig.new(name, email, identity_name).with_mapper(mapper) }
 
     let(:name) { "sarah" }
     let(:email) { "sarah.o@example.org" }
 
     let(:identity_name) { "sarah_personal" }
 
-    let(:store_factory) { class_double(Store) }
-    let(:identity_store) { instance_double(IdentityStore, git_config: git_config_hash) }
+    let(:mapper_factory) { class_double(GitConfig::Mapper) }
+    let(:mapper) { instance_double(GitConfig::Mapper) }
 
     let(:git_config_hash) { { "name" => name, "email" => email } }
 
     before do
-      Registry.register_store_factory(store_factory)
-      allow(store_factory)
-        .to receive(:with_identity)
+      Registry.register_git_config_mapper_factory(mapper_factory)
+      allow(mapper_factory)
+        .to receive(:find_by_identity)
         .with(identity_name)
-        .and_return(identity_store)
+        .and_return(git_config)
     end
 
     describe "#initialize" do
@@ -65,27 +65,27 @@ module Me
     end
 
     describe ".for_identity" do
-      subject(:git_config) { GitConfig.for_identity(identity_name) }
-      let(:found_name) { double("Name") }
-      let(:found_email) { double("Email") }
+      subject(:git_config_from_identity) { GitConfig.for_identity(identity_name) }
+      let(:a_git_config) { instance_double(GitConfig) }
 
       before do
-        allow(identity_store)
-          .to receive(:git_config)
-          .and_return("name" => found_name, "email" => found_email)
+        allow(mapper_factory)
+          .to receive(:find_by_identity)
+          .with(identity_name)
+          .and_return(a_git_config)
       end
 
       it "finds git config for specified identity" do
-        expect(git_config).to eq(GitConfig.new(found_name, found_email, identity_name))
+        expect(git_config_from_identity).to eq(a_git_config)
       end
     end
 
     describe "#configure" do
       context "when name and email are present" do
         it "delegates to store to configure git" do
-          expect(identity_store)
-            .to receive(:save_git_config)
-            .with("name" => name, "email" => email)
+          expect(mapper)
+            .to receive(:update)
+            .with(name: name, email: email)
             .once
 
           git_config.configure
@@ -97,7 +97,7 @@ module Me
         let(:email) { nil }
 
         it "does nothing" do
-          expect(identity_store).not_to receive(:save_git_config)
+          expect(mapper).not_to receive(:update)
           git_config.configure
         end
       end

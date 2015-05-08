@@ -9,6 +9,7 @@ module Me
     delegate [
       :store_factory, :register_store_factory,
       :identity_mapper_factory, :register_identity_mapper_factory,
+      :git_config_mapper_factory, :register_git_config_mapper_factory,
     ] => :thread_scoped
 
     delegate [:error_view_factories, :register_error_view_factories] => :process_scoped
@@ -39,7 +40,9 @@ module Me
     end
 
     class ThreadScoped < Base
-      def_registry_readers :store_factory, :identity_mapper_factory
+      def_registry_readers :store_factory,
+                           :identity_mapper_factory,
+                           :git_config_mapper_factory
     end
   end
 end
