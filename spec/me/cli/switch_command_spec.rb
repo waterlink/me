@@ -10,8 +10,8 @@ module Me
       let(:name) { double("Name") }
 
       let(:identity) { double("Identity") }
-      let(:mapper_factory) { class_double(Identity::Store2Mapper) }
-      let(:mapper) { instance_double(Identity::Store2Mapper, find: identity) }
+      let(:mapper_factory) { class_double(Identity::Mapper) }
+      let(:mapper) { instance_double(Identity::Mapper, find: identity) }
 
       let(:active_identity) { double("Active Identity") }
 

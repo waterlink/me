@@ -41,39 +41,15 @@ module Me
     end
   end
 
-  class Identity::Store2Mapper
+  # @abstract
+  class Identity::Mapper
     def initialize(name = nil)
-      @name = name || active_identity
     end
 
     def find
-      Identity.build(
-        mapper: self,
-        name: name,
-        active_identity: active_identity,
-      )
     end
 
-    def update(name: nil, active_identity:)
-      store.set("active_identity", active_identity)
-    end
-
-    protected
-
-    attr_reader :name
-
-    private
-
-    def active_identity
-      store.get_or_set("active_identity", "<none>")
-    end
-
-    def store
-      @_store ||= Store2.build
-    end
-
-    def scoped
-      @_scoped ||= store.scoped("identities", name)
+    def update(name: nil, active_identity: nil)
     end
   end
 end

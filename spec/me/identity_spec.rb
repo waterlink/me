@@ -8,9 +8,9 @@ module Me
 
     let(:name) { "john" }
 
-    let(:mapper_factory) { class_double(Identity::Store2Mapper, new: active_mapper) }
-    let(:active_mapper) { instance_double(Identity::Store2Mapper) }
-    let(:mapper) { instance_double(Identity::Store2Mapper) }
+    let(:mapper_factory) { class_double(Identity::Mapper, new: active_mapper) }
+    let(:active_mapper) { instance_double(Identity::Mapper) }
+    let(:mapper) { instance_double(Identity::Mapper) }
 
     before do
       Registry.register_identity_mapper_factory(mapper_factory)
