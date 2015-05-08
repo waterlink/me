@@ -1,5 +1,5 @@
-require "yaml"
 require "me/errors"
+require "me/store2"
 
 module Me
   class IdentityStore < Struct.new(:store, :identity)
@@ -42,12 +42,12 @@ module Me
     end
 
     def activate(identity)
-      persistence["active_identity"] = identity
+      persistence.set("active_identity", identity)
       save
     end
 
     def active_identity
-      persistence.fetch("active_identity", "<none>")
+      persistence.get_or_set("active_identity", "<none>")
     end
 
     def git_config(identity)
@@ -56,7 +56,7 @@ module Me
     end
 
     def save_git_config(identity, git_config)
-      identity_for(identity)["git"] = git_config
+      identity_for(identity).set("git", git_config)
       save
     end
 
@@ -66,12 +66,12 @@ module Me
     end
 
     def save_ssh_config(identity, ssh_config)
-      identity_for(identity)["ssh"] = ssh_config
+      identity_for(identity).set("ssh", ssh_config)
       save
     end
 
     def _reset
-      create
+      persistence._reset
     end
 
     protected
@@ -81,16 +81,11 @@ module Me
     private
 
     def load
-      return create unless File.exist?(filename)
-      YAML.load_file(filename)
-    end
-
-    def create
-      (@persistence = {}).tap { save }
+      Store2.build(filename)
     end
 
     def save
-      File.write(filename, persistence.to_yaml)
+      persistence.save
     end
 
     def filename
@@ -106,12 +101,14 @@ module Me
     end
 
     def identities
-      persistence["identities"] ||= {}
+      persistence.get_or_set("identities", {})
+      persistence.scoped("identities")
     end
 
     def identity_for(identity)
       fail Errors::NoActiveIdentity if identity == "<none>"
-      identities[identity] ||= {}
+      identities.get_or_set(identity, {})
+      identities.scoped(identity)
     end
 
     class Environment < Struct.new(:value)
