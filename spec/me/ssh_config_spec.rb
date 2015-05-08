@@ -1,23 +1,24 @@
 require "me/ssh_config"
-require "me/store"
 require "me/registry"
 
 module Me
   RSpec.describe SshConfig do
-    subject(:ssh_config) { SshConfig.new(keys, identity_name) }
+    subject(:ssh_config) { SshConfig.new(keys, identity_name).with_mapper(mapper) }
 
     let(:identity_name) { "sarah_work" }
     let(:keys) { ["id_rsa", "github.rsa"] }
 
-    let(:store_factory) { class_double(Store) }
-    let(:identity_store) { instance_double(IdentityStore) }
+    let(:found_ssh_config) { instance_double(SshConfig) }
+
+    let(:mapper_factory) { class_double(SshConfig::Mapper) }
+    let(:mapper) { instance_double(SshConfig::Mapper) }
 
     before do
-      Registry.register_store_factory(store_factory)
-      allow(store_factory)
-        .to receive(:with_identity)
+      Registry.register_ssh_config_mapper_factory(mapper_factory)
+      allow(mapper_factory)
+        .to receive(:find_by_identity)
         .with(identity_name)
-        .and_return(identity_store)
+        .and_return(found_ssh_config)
     end
 
     describe "#initialize" do
@@ -54,9 +55,9 @@ module Me
         let(:keys) { instance_double(Array, empty?: false) }
 
         it "delegates to store to configure ssh" do
-          expect(identity_store)
-            .to receive(:save_ssh_config)
-            .with("keys" => keys)
+          expect(mapper)
+            .to receive(:update)
+            .with(keys: keys)
             .once
 
           ssh_config.configure
@@ -67,7 +68,7 @@ module Me
         let(:keys) { instance_double(Array, empty?: true) }
 
         it "does nothing" do
-          expect(identity_store).not_to receive(:save_ssh_config)
+          expect(mapper).not_to receive(:update)
           ssh_config.configure
         end
       end
@@ -88,14 +89,9 @@ module Me
 
     describe ".for_identity" do
       subject(:ssh_config) { SshConfig.for_identity(identity_name) }
-      let(:found_keys) { double("Keys") }
-
-      before do
-        allow(identity_store).to receive(:ssh_config).and_return("keys" => found_keys)
-      end
 
       it "finds ssh config for specified identity" do
-        expect(ssh_config).to eq(SshConfig.new(found_keys, identity_name))
+        expect(ssh_config).to eq(found_ssh_config)
       end
     end
   end

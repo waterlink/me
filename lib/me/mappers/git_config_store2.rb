@@ -44,7 +44,7 @@ module Me
       end
 
       def scoped
-        store.scoped("identities", identity_name, "git")
+        @_scoped ||= store.scoped("identities", identity_name, "git")
       end
     end
   end

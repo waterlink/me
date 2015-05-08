@@ -12,7 +12,7 @@ module Me
       private
 
       def ssh_config
-        SshConfig.new(keys, identity_name)
+        Registry.ssh_config_mapper_factory.new(keys, identity_name).find
       end
 
       def current_ssh_config

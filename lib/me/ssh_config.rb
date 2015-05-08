@@ -12,32 +12,42 @@ module Me
       self.keys == other.keys
     end
 
+    def with_mapper(mapper)
+      @mapper = mapper
+      self
+    end
+
     def configure
       return if keys.empty?
-      store.save_ssh_config("keys" => keys)
+      mapper.update(keys: keys)
     end
 
     def build_view(view_factory)
       view_factory.new(keys: keys)
     end
 
-    def _load
-      @keys = store.ssh_config["keys"]
-      self
-    end
-
     protected
 
-    attr_reader :keys, :identity_name
-
-    def store
-      @_store ||= Registry.store_factory.with_identity(identity_name)
-    end
+    attr_reader :keys, :identity_name, :mapper
   end
 
   class << SshConfig
     def for_identity(identity_name)
-      new(nil, identity_name)._load
+      Registry.ssh_config_mapper_factory.find_by_identity(identity_name)
+    end
+  end
+
+  class SshConfig::Mapper
+    def self.find_by_identity(identity_name)
+    end
+
+    def initialize(keys, identity_name)
+    end
+
+    def find
+    end
+
+    def update(keys: nil, identity_name: nil)
     end
   end
 end
