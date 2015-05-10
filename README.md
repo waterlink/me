@@ -34,7 +34,7 @@ me switch work
 ### Checking which identity is active
 
 ```
-me                 # This will actually activate all configuration
+me                 # This will actually activate all configuration (alias for `me activate`)
 # or
 me whoami          # This will not activate configuration
 ```
