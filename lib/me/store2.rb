@@ -7,6 +7,12 @@ module Me
         @store, @scope = store, scope
       end
 
+      def ==(other)
+        return false unless other.is_a?(Scoped)
+        [self.store, self.scope] ==
+          [other.store, other.scope]
+      end
+
       def scoped(*add_scope)
         Scoped.new(store, scope + add_scope)
       end
@@ -50,6 +56,10 @@ module Me
 
     def self.build
       Store2.new.scoped
+    end
+
+    def ==(other)
+      other.is_a?(Store2)
     end
 
     def scoped(*scope)
