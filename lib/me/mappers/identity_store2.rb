@@ -35,10 +35,6 @@ module Me
       def store
         @_store ||= Store2.build
       end
-
-      def scoped
-        @_scoped ||= store.scoped("identities", name)
-      end
     end
   end
 end
