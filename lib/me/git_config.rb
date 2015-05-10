@@ -22,6 +22,10 @@ module Me
       mapper.update(name: name, email: email)
     end
 
+    def activate
+      fail
+    end
+
     def build_view(view_factory)
       view_factory.new(name: name, email: email)
     end

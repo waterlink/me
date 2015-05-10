@@ -22,6 +22,10 @@ module Me
       mapper.update(keys: keys)
     end
 
+    def activate
+      fail
+    end
+
     def build_view(view_factory)
       view_factory.new(keys: keys)
     end

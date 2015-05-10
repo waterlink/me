@@ -21,6 +21,14 @@ module Me
       mapper.update(active_identity: name)
     end
 
+    def git_config
+      fail
+    end
+
+    def ssh_config
+      fail
+    end
+
     def with_mapper(mapper)
       @mapper = mapper
       self
