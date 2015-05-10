@@ -1,5 +1,6 @@
 require "me/store2"
 require "me/git_config"
+require "me/errors"
 
 module Me
   module Mappers
@@ -15,6 +16,7 @@ module Me
       end
 
       def find
+        ensure_present
         GitConfig
           .new(name, email, identity_name)
           .with_mapper(self)
@@ -29,7 +31,12 @@ module Me
 
       private
 
-      attr_reader :name, :email, :identity_name
+      attr_reader :name, :email, :identity_name, :fetched
+
+      def ensure_present
+        return if name && email
+        fail Errors::GitNotConfigured, identity_name
+      end
 
       def fetch_name
         scoped.get("name")
@@ -44,7 +51,14 @@ module Me
       end
 
       def scoped
-        @_scoped ||= store.scoped("identities", identity_name, "git")
+        @_scoped ||= _scoped
+      end
+
+      def _scoped
+        store.get_or_set("identities", {})
+        store.get_or_set("identities", identity_name, {})
+        store.get_or_set("identities", identity_name, "git", {})
+        store.scoped("identities", identity_name, "git")
       end
     end
   end

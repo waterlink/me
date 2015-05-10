@@ -1,6 +1,5 @@
 require "thor"
 
-require "me/store"
 require "me/registry"
 require "me/errors"
 require "me/error_presenter"
@@ -23,7 +22,6 @@ module Me
       "Me::Errors::SshNotConfigured" => SshNotConfiguredView,
     }
 
-    Registry.register_store_factory(Store)
     Registry.register_error_view_factories(ERROR_VIEW_FACTORIES)
     Registry.register_identity_mapper_factory(Me::Mappers::IdentityStore2)
     Registry.register_git_config_mapper_factory(Me::Mappers::GitConfigStore2)

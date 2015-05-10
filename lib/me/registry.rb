@@ -7,7 +7,6 @@ module Me
     extend Forwardable
 
     delegate [
-      :store_factory, :register_store_factory,
       :identity_mapper_factory, :register_identity_mapper_factory,
       :git_config_mapper_factory, :register_git_config_mapper_factory,
       :ssh_config_mapper_factory, :register_ssh_config_mapper_factory,
@@ -41,8 +40,7 @@ module Me
     end
 
     class ThreadScoped < Base
-      def_registry_readers :store_factory,
-                           :identity_mapper_factory,
+      def_registry_readers :identity_mapper_factory,
                            :git_config_mapper_factory,
                            :ssh_config_mapper_factory
     end
