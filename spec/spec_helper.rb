@@ -1,6 +1,5 @@
 ENV["ME_ENV"] ||= "test"
 
-require "me/store"
 require "me/thread_scope"
 
 RSpec.configure do |config|
@@ -30,7 +29,7 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.before do
-    Me::Store.new._reset
+    Me::Store2.new._reset
   end
 
   config.after do

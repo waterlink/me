@@ -1,5 +1,4 @@
 require "me/cli/switch_command"
-require "me/store"
 require "me/registry"
 
 module Me

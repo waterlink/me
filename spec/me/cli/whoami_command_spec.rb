@@ -1,6 +1,5 @@
 require "me/cli/whoami_command"
 require "me/registry"
-require "me/store"
 
 module Me
   module Cli

@@ -1,5 +1,4 @@
 require "me/git_config"
-require "me/store"
 require "me/registry"
 
 module Me
