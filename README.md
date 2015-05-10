@@ -34,9 +34,9 @@ me switch work
 ### Checking which identity is active
 
 ```
-me
+me                 # This will actually activate all configuration
 # or
-me whoami
+me whoami          # This will not activate configuration
 ```
 
 ### Configuring git identity
