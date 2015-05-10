@@ -1,5 +1,6 @@
 require "me/store2"
 require "me/ssh_config"
+require "me/errors"
 
 module Me
   module Mappers
@@ -10,10 +11,11 @@ module Me
 
       def initialize(keys, identity_name)
         @identity_name = identity_name
-        @keys = keys || fetch_keys
+        @keys = fetch_keys(keys)
       end
 
       def find
+        ensure_present
         SshConfig
           .new(keys, identity_name)
           .with_mapper(self)
@@ -21,7 +23,6 @@ module Me
 
       def update(keys: nil, identity_name: nil)
         return unless keys
-        identity.get_or_set("ssh", {})
         scoped.set("keys", keys)
         scoped.save
       end
@@ -30,7 +31,13 @@ module Me
 
       attr_reader :identity_name, :keys
 
-      def fetch_keys
+      def ensure_present
+        return if keys && !keys.empty?
+        fail Errors::SshNotConfigured, identity_name
+      end
+
+      def fetch_keys(keys)
+        return keys if keys && !keys.empty?
         scoped.get("keys")
       end
 
@@ -39,11 +46,22 @@ module Me
       end
 
       def identity
-        @_identity ||= store.scoped("identities", identity_name)
+        @_identity ||= _identity
+      end
+
+      def _identity
+        store.get_or_set("identities", {})
+        store.get_or_set("identities", identity_name, {})
+        store.scoped("identities", identity_name)
       end
 
       def scoped
-        @_scoped ||= identity.scoped("ssh")
+        @_scoped ||= _scoped
+      end
+
+      def _scoped
+        identity.get_or_set("ssh", {})
+        identity.scoped("ssh")
       end
     end
   end

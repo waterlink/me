@@ -34,6 +34,10 @@ module Me
           expect {
             described_class.new(nil, "a email", "a identity").find
           }.to raise_error(Errors::GitNotConfigured)
+
+          expect {
+            described_class.new("a name", nil, "a identity").find
+          }.to raise_error(Errors::GitNotConfigured)
         end
 
         it "populates GitConfig with missing attributes if it is able to find it" do

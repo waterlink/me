@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+## This script tested on ubuntu, probably will not work properly on
+## mac os x..
+
 echo -n "free" > tests.lock
 
 function termtitle {
