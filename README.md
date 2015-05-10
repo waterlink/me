@@ -5,7 +5,7 @@ Small tool for switching common identities (ssh keys, git config, etc)
 ## TODO
 
 - [x] Split `Store` into 3 independent stores and remove how much small domain logic it has left
-- [ ] Cover mappers and `Store2` with unit specs
+- [x] Cover mappers and `Store2` with unit specs
 - [x] Kill `Store`. And leave `Store2` with its name (it sounds cool :D )
 - [ ] Implement actual activation of configurations for ssh and git (probably invoked by `me`)
 
