@@ -11,12 +11,25 @@ module Me
     let(:active_mapper) { instance_double(Identity::Mapper) }
     let(:mapper) { instance_double(Identity::Mapper) }
 
+    let(:git_config) { instance_double(GitConfig) }
+    let(:ssh_config) { instance_double(SshConfig) }
+
     before do
       Registry.register_identity_mapper_factory(mapper_factory)
       allow(mapper_factory)
         .to receive(:new)
         .with(name)
         .and_return(mapper)
+
+      allow(GitConfig)
+        .to receive(:for_identity)
+        .with(name)
+        .and_return(git_config)
+
+      allow(SshConfig)
+        .to receive(:for_identity)
+        .with(name)
+        .and_return(ssh_config)
     end
 
     describe "#initialize" do
@@ -68,6 +81,18 @@ module Me
       it "calls update on mapper with active_identity = name" do
         expect(mapper).to receive(:update).with(active_identity: name).once
         identity.activate
+      end
+    end
+
+    describe "#git_config" do
+      it "returns git config for this identity" do
+        expect(identity.git_config).to eq(git_config)
+      end
+    end
+
+    describe "#ssh_config" do
+      it "returns ssh config for this identity" do
+        expect(identity.ssh_config).to eq(ssh_config)
       end
     end
   end

@@ -1,4 +1,5 @@
 require "me/thread_scope"
+require "me/git_config"
 require "me/store2"
 
 module Me
@@ -22,11 +23,11 @@ module Me
     end
 
     def git_config
-      fail
+      GitConfig.for_identity(name)
     end
 
     def ssh_config
-      fail
+      SshConfig.for_identity(name)
     end
 
     def with_mapper(mapper)
