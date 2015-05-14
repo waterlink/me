@@ -1,3 +1,5 @@
+require "me/registry"
+
 module Me
   # Represents piece of personalised git configuration
   class GitConfig
@@ -23,7 +25,8 @@ module Me
     end
 
     def activate
-      fail
+      activate_email
+      activate_name
     end
 
     def build_view(view_factory)
@@ -36,6 +39,20 @@ module Me
 
     def equality_fields
       [name, email]
+    end
+
+    private
+
+    def activate_email
+      executor.call(["git", "config", "--global", "user.email", email])
+    end
+
+    def activate_name
+      executor.call(["git", "config", "--global", "user.name", name])
+    end
+
+    def executor
+      @_executor ||= Registry.executor_factory.new
     end
   end
 

@@ -1,4 +1,5 @@
 require "me/git_config"
+require "me/executor"
 require "me/registry"
 
 module Me
@@ -15,12 +16,17 @@ module Me
 
     let(:git_config_hash) { { "name" => name, "email" => email } }
 
+    let(:executor_factory) { class_double(Executor, new: executor) }
+    let(:executor) { instance_double(Executor, call: nil) }
+
     before do
       Registry.register_git_config_mapper_factory(mapper_factory)
       allow(mapper_factory)
         .to receive(:find_by_identity)
         .with(identity_name)
         .and_return(git_config)
+
+      Registry.register_executor_factory(executor_factory)
     end
 
     describe "#initialize" do
@@ -112,6 +118,22 @@ module Me
           .with(name: name, email: email)
           .and_return(view)
         expect(git_config.build_view(view_factory)).to eq(view)
+      end
+    end
+
+    describe "#activate" do
+      it "sets up global git user.email config" do
+        expect(executor)
+          .to receive(:call)
+          .with(["git", "config", "--global", "user.email", email])
+        git_config.activate
+      end
+
+      it "usersets up global git user.name config" do
+        expect(executor)
+          .to receive(:call)
+          .with(["git", "config", "--global", "user.name", name])
+        git_config.activate
       end
     end
   end
