@@ -1,4 +1,6 @@
 require "me/identity"
+require "me/git_config"
+require "me/ssh_config"
 require "me/registry"
 
 module Me

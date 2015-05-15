@@ -13,7 +13,10 @@ module Me
       :executor_factory, :register_executor_factory,
     ] => :thread_scoped
 
-    delegate [:error_view_factories, :register_error_view_factories] => :process_scoped
+    delegate [
+      :error_view_factories, :register_error_view_factories,
+      :kernel, :register_kernel,
+    ] => :process_scoped
 
     private
 
@@ -37,14 +40,15 @@ module Me
     end
 
     class ProcessScoped < Base
-      def_registry_readers :error_view_factories
+      def_registry_readers :error_view_factories,
+        :kernel
     end
 
     class ThreadScoped < Base
       def_registry_readers :identity_mapper_factory,
-                           :git_config_mapper_factory,
-                           :ssh_config_mapper_factory,
-                           :executor_factory
+        :git_config_mapper_factory,
+        :ssh_config_mapper_factory,
+        :executor_factory
     end
   end
 end
