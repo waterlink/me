@@ -4,7 +4,7 @@ module Me
   RSpec.describe Executor do
     subject(:executor) { described_class.new }
 
-    let(:args) { double("args") }
+    let(:args) { [double("arg"), double("arg"), double("arg")] }
     let(:kernel) { double("Kernel") }
 
     before do
@@ -15,7 +15,7 @@ module Me
       it "delegates to kernel" do
         expect(kernel)
           .to receive(:system)
-          .with(args)
+          .with(*args)
         executor.call(args)
       end
     end

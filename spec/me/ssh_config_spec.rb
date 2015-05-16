@@ -1,4 +1,5 @@
 require "me/ssh_config"
+require "me/executor"
 require "me/registry"
 
 module Me
@@ -13,12 +14,17 @@ module Me
     let(:mapper_factory) { class_double(SshConfig::Mapper) }
     let(:mapper) { instance_double(SshConfig::Mapper) }
 
+    let(:executor_factory) { class_double(Executor, new: executor) }
+    let(:executor) { instance_double(Executor) }
+
     before do
       Registry.register_ssh_config_mapper_factory(mapper_factory)
       allow(mapper_factory)
         .to receive(:find_by_identity)
         .with(identity_name)
         .and_return(found_ssh_config)
+
+      Registry.register_executor_factory(executor_factory)
     end
 
     describe "#initialize" do
@@ -92,6 +98,20 @@ module Me
 
       it "finds ssh config for specified identity" do
         expect(ssh_config).to eq(found_ssh_config)
+      end
+    end
+
+    describe "#activate" do
+      it "sets up proper ssh keys" do
+        [
+          ["ssh-add", "-D"],
+          ["ssh-add", "id_rsa"],
+          ["ssh-add", "github.rsa"],
+        ].each do |command|
+          expect(executor).to receive(:call).with(command).ordered.once
+        end
+
+        ssh_config.activate
       end
     end
   end

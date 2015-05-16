@@ -29,6 +29,7 @@ module Me
       "Me::Errors::SshNotConfigured" => SshNotConfiguredView,
     }
 
+    Registry.register_kernel(Kernel)
     Registry.register_executor_factory(Executor)
     Registry.register_error_view_factories(ERROR_VIEW_FACTORIES)
     Registry.register_identity_mapper_factory(Me::Mappers::IdentityStore2)

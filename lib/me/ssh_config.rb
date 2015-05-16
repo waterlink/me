@@ -23,7 +23,8 @@ module Me
     end
 
     def activate
-      fail
+      clear_ssh_keys
+      keys.each(&method(:add_ssh_key))
     end
 
     def build_view(view_factory)
@@ -33,6 +34,20 @@ module Me
     protected
 
     attr_reader :keys, :identity_name, :mapper
+
+    private
+
+    def clear_ssh_keys
+      executor.call(["ssh-add", "-D"])
+    end
+
+    def add_ssh_key(key)
+      executor.call(["ssh-add", key])
+    end
+
+    def executor
+      @_executor ||= Registry.executor_factory.new
+    end
   end
 
   class << SshConfig
