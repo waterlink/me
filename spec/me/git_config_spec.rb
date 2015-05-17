@@ -1,4 +1,5 @@
 require "me/git_config"
+require "me/activation"
 require "me/executor"
 require "me/registry"
 
@@ -129,11 +130,20 @@ module Me
         git_config.activate
       end
 
-      it "usersets up global git user.name config" do
+      it "sets up global git user.name config" do
         expect(executor)
           .to receive(:call)
           .with(["git", "config", "--global", "user.name", name])
         git_config.activate
+      end
+
+      it "returns an activation" do
+        expect(git_config.activate).to eq(
+          Activation.new._with_commands([
+            ["git", "config", "--global", "user.name", name],
+            ["git", "config", "--global", "user.email", email],
+          ])
+        )
       end
     end
   end

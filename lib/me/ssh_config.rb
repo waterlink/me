@@ -1,4 +1,5 @@
 require "me/registry"
+require "me/ssh_activation"
 
 module Me
   class SshConfig
@@ -23,8 +24,8 @@ module Me
     end
 
     def activate
-      clear_ssh_keys
-      keys.each(&method(:add_ssh_key))
+      activation.call
+      activation
     end
 
     def build_view(view_factory)
@@ -37,16 +38,8 @@ module Me
 
     private
 
-    def clear_ssh_keys
-      executor.call(["ssh-add", "-D"])
-    end
-
-    def add_ssh_key(key)
-      executor.call(["ssh-add", key])
-    end
-
-    def executor
-      @_executor ||= Registry.executor_factory.new
+    def activation
+      @_activation ||= SshActivation.new(keys)
     end
   end
 

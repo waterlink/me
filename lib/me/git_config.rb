@@ -1,4 +1,5 @@
 require "me/registry"
+require "me/git_activation"
 
 module Me
   # Represents piece of personalised git configuration
@@ -25,8 +26,8 @@ module Me
     end
 
     def activate
-      activate_email
-      activate_name
+      activation.call
+      activation
     end
 
     def build_view(view_factory)
@@ -43,16 +44,8 @@ module Me
 
     private
 
-    def activate_email
-      executor.call(["git", "config", "--global", "user.email", email])
-    end
-
-    def activate_name
-      executor.call(["git", "config", "--global", "user.name", name])
-    end
-
-    def executor
-      @_executor ||= Registry.executor_factory.new
+    def activation
+      @_activation ||= GitActivation.new(name, email)
     end
   end
 

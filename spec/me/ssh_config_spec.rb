@@ -1,4 +1,5 @@
 require "me/ssh_config"
+require "me/activation"
 require "me/executor"
 require "me/registry"
 
@@ -15,7 +16,7 @@ module Me
     let(:mapper) { instance_double(SshConfig::Mapper) }
 
     let(:executor_factory) { class_double(Executor, new: executor) }
-    let(:executor) { instance_double(Executor) }
+    let(:executor) { instance_double(Executor, call: nil) }
 
     before do
       Registry.register_ssh_config_mapper_factory(mapper_factory)
@@ -102,16 +103,22 @@ module Me
     end
 
     describe "#activate" do
+      let(:expected_commands) { [
+        ["ssh-add", "-D"],
+        ["ssh-add", "id_rsa"],
+        ["ssh-add", "github.rsa"],
+      ] }
+
       it "sets up proper ssh keys" do
-        [
-          ["ssh-add", "-D"],
-          ["ssh-add", "id_rsa"],
-          ["ssh-add", "github.rsa"],
-        ].each do |command|
+        expected_commands.each do |command|
           expect(executor).to receive(:call).with(command).ordered.once
         end
 
         ssh_config.activate
+      end
+
+      it "returns proper activation object" do
+        expect(ssh_config.activate).to eq(Activation.new._with_commands(expected_commands))
       end
     end
   end
