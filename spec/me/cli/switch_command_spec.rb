@@ -14,6 +14,12 @@ module Me
 
       let(:active_identity) { double("Active Identity") }
 
+      let(:activate_command) { instance_double(ActivateCommand, call: activation_views) }
+      let(:activation_views) { [activation_view_a, activation_view_b] }
+
+      let(:activation_view_a) { double("View") }
+      let(:activation_view_b) { double("View") }
+
       before do
         Registry.register_identity_mapper_factory(mapper_factory)
 
@@ -28,6 +34,10 @@ module Me
           .to receive(:new)
           .with(name)
           .and_return(mapper)
+
+        allow(ActivateCommand)
+          .to receive(:new)
+          .and_return(activate_command)
       end
 
       describe "#call" do
@@ -36,8 +46,17 @@ module Me
           command.call
         end
 
+        it "activates configuration" do
+          expect(activate_command).to receive(:call).and_return(activation_views)
+          command.call
+        end
+
         it "responds with new active identity" do
-          expect(command.call.to_s).to eq("New active identity: new_identity")
+          expect(command.call[0].to_s).to eq("New active identity: new_identity")
+        end
+
+        it "responds with activation views too" do
+          expect(command.call[1..-1]).to eq(activation_views)
         end
       end
     end
