@@ -1,5 +1,4 @@
 require "me/identity"
-require "me/store2"
 
 module Me
   module Mappers
@@ -33,7 +32,7 @@ module Me
       end
 
       def store
-        @_store ||= Store2.build
+        @_store ||= Store.build
       end
     end
   end

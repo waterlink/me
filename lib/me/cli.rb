@@ -1,6 +1,7 @@
 require "thor"
 
 # common
+require "me/store"
 require "me/registry"
 require "me/executor"
 require "me/errors"
