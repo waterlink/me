@@ -1,6 +1,6 @@
-require "me/store2"
 require "me/ssh_config"
 require "me/errors"
+require "me/store"
 
 module Me
   module Mappers
@@ -38,11 +38,11 @@ module Me
 
       def fetch_keys(keys)
         return keys if keys && !keys.empty?
-        scoped.get("keys")
+        scoped.fetch("keys") { nil }
       end
 
       def store
-        @_store ||= Store2.build
+        @_store ||= Store.build
       end
 
       def identity

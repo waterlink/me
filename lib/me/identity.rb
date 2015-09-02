@@ -1,6 +1,5 @@
 require "me/thread_scope"
 require "me/git_config"
-require "me/store2"
 
 module Me
   # Represents certain person, or person in certain role or situation

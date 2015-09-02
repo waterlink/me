@@ -10,7 +10,7 @@ module Me
       let(:active_identity) { "james" }
 
       before do
-        store = Store2.build
+        store = Store.build
         store.set("active_identity", active_identity)
         store.save
       end

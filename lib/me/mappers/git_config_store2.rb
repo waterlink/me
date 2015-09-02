@@ -1,4 +1,3 @@
-require "me/store2"
 require "me/git_config"
 require "me/errors"
 
@@ -39,15 +38,15 @@ module Me
       end
 
       def fetch_name
-        scoped.get("name")
+        scoped.fetch("name") { nil }
       end
 
       def fetch_email
-        scoped.get("email")
+        scoped.fetch("email") { nil }
       end
 
       def store
-        @_store ||= Store2.build
+        @_store ||= Store.build
       end
 
       def scoped
